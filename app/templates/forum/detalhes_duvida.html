@@ -1,0 +1,30 @@
+<h1>Detalhes da Dúvida</h1>
+<p><strong>Título:</strong> {{ duvida.titulo }}</p>
+<p><strong>Dúvida:</strong> {{ duvida.duvida }}</p>
+
+<h2>Comentários</h2>
+<ul>
+    {% for comentario in comentarios %}
+        <li>
+            <strong>{{ comentario.autor }}:</strong> {{ comentario.texto }} - {{ comentario.data_criacao }}
+            {% if request.user == comentario.autor or request.user.is_superuser %}
+                <a href="{% url 'edita_comentario' comentario.id %}">Editar</a>
+                <form method="post" action="{% url 'exclui_comentario' comentario.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este comentário?');">Excluir</button>
+                </form>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>Não há comentários ainda.</li>
+    {% endfor %}
+</ul>
+
+<h3>Adicionar Comentário</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Comentar</button>
+</form>
+
+<a href="{% url 'lista_duvidas' %}">Voltar para a lista</a>

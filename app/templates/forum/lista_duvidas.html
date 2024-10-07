@@ -1,0 +1,17 @@
+<h1>Fórum de Dúvidas</h1>
+<a href="{% url 'cria_duvida' %}">Fazer uma nova pergunta</a>
+<ul>
+  {% for duvida in duvidas %}
+    <li>
+      <a href="{% url 'detalhes_duvida' duvida.id %}">{{ duvida.titulo }}</a>
+      
+      {% if request.user == duvida.autor or request.user.is_staff %}
+        <a href="{% url 'edita_duvida' duvida.id %}">Editar Dúvida</a>
+        <form method="post" action="{% url 'exclui_duvida' duvida.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Tem certeza que deseja excluir esta dúvida?');">Excluir Dúvida</button>
+        </form>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>

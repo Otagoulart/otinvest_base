@@ -1,0 +1,16 @@
+<form method="post">
+    {% csrf_token %}
+    {{ form.answer_1.label_tag }}<br>
+    {{ form.answer_1 }}<br>
+    <br>
+    {{ form.answer_2.label_tag }}<br>
+    {{ form.answer_2 }}<br>
+    <br>
+    {{ form.answer_3.label_tag }}<br>
+    {{ form.answer_3 }}<br>
+    <br>
+    {{ form.answer_4.label_tag }}<br>
+    {{ form.answer_4 }}<br>
+    <br>
+    <input type="submit" value="Submit">
+</form>

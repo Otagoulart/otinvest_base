@@ -1,0 +1,8 @@
+<h1>Editar Dúvida</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar Alterações</button>
+</form>
+
+<a href="{% url 'detalhes_duvida' duvida.id %}">Cancelar</a>
