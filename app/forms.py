@@ -6,6 +6,7 @@ from .models import Investidor
 from .models import Duvida
 from .models import Comentario
 from .models import Answer
+from .models import Corretora, TipoInvestimento, PerfilInvest
 
 class RegisterForm(UserCreationForm):
     # Campos relacionados ao investidor
@@ -55,3 +56,18 @@ class QuizForm(forms.Form):
     answer_2 = forms.ChoiceField(label="Qual é o seu nível de experiência com investimentos?", choices=[])
     answer_3 = forms.ChoiceField(label="Qual é a sua tolerância ao risco?", choices=[])
     answer_4 = forms.ChoiceField(label="Por quanto tempo você pretende manter seus investimentos?", choices=[])
+
+class InvestimentoForm(forms.ModelForm):
+    class Meta:
+        model = PerfilInvest
+        fields = ['descricao', 'capital_investido', 'corretora', 'tipo_investimento']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Pega o user dos kwargs ou None se não for passado
+        super(InvestimentoForm, self).__init__(*args, **kwargs)
+
+        # Se o usuário foi passado, ajuste os campos conforme necessário
+        if user is not None:
+            self.fields['corretora'].queryset = Corretora.objects.filter()  # Aqui você pode filtrar baseado no user
+
+

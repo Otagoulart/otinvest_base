@@ -27,13 +27,12 @@ class Comentario(models.Model):
         
 class Investidor(models.Model):
     id_investidor = models.AutoField(primary_key=True)  # Este é o campo principal
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default=1)  # Associa um Investidor a um User
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=1, related_name='investidor')  # Associa um Investidor a um User
     nome = models.CharField(max_length=100)
     cpf = models.CharField(max_length=11)
     datanasc = models.DateField(null=True, blank=True)
     endereco = models.CharField(max_length=255)
     cidade = models.CharField(max_length=100)
-    senha = models.CharField(max_length=50)
 
     class Meta:
         verbose_name_plural = "Investidores"
@@ -66,46 +65,46 @@ class Contato(models.Model):
 
     def __str__(self):
         return self.email
-
-# Modelo para Tipos de Investimentos
-class TipoInvest(models.Model):
-    tipo_de_investimento = models.CharField(max_length=255)
-    area = models.CharField(max_length=255)
-    relato = models.TextField()
-    dicas = models.TextField()
-    investidor = models.ForeignKey(Investidor, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name_plural = "Tipos de Investimentos"
-
-    def __str__(self):
-        return self.tipo_de_investimento
-
-# Modelo para Corretoras
 class Corretora(models.Model):
     nome = models.CharField(max_length=255)
-    area = models.CharField(max_length=255)
-    avaliacao = models.FloatField()
-    investidor = models.ForeignKey(Investidor, on_delete=models.CASCADE)
+    avaliacao = models.FloatField()  # Avaliação da corretora, por exemplo, de 0 a 5
+    pais = models.CharField(max_length=100, default="Brasil")  # País onde a corretora opera
 
     class Meta:
         verbose_name_plural = "Corretoras"
 
     def __str__(self):
-        return self.nome
+        return f"{self.nome} - {self.pais}"
+
+
+class TipoInvestimento(models.Model):
+    tipo = models.CharField(max_length=100)
+    descricao = models.TextField()
+    risco = models.CharField(max_length=50)  # Exemplo: "Alto", "Moderado", "Baixo"
+    retorno_esperado = models.DecimalField(max_digits=10, decimal_places=2)  # Percentual de retorno esperado
+
+    class Meta:
+        verbose_name_plural = "Tipos de Investimento"
+
+    def __str__(self):
+        return self.tipo
+
+
 
 class PerfilInvest(models.Model):
-    idperfilinvest = models.BigAutoField(primary_key=True)  # Exemplo correto
+    idperfilinvest = models.BigAutoField(primary_key=True, )  # Exemplo correto
     investidor = models.ForeignKey(Investidor, on_delete=models.CASCADE)
     descricao = models.CharField(max_length=50)
-    salario = models.DecimalField(max_digits=10, decimal_places=2)
-    id_capitalinvest = models.DecimalField(max_digits=10, decimal_places=2, default=100)
+    capital_investido = models.DecimalField(max_digits=10, decimal_places=2, default=100)
+    corretora = models.ForeignKey(Corretora, on_delete=models.CASCADE )  # Chave estrangeira para Corretora
+    tipo_investimento = models.ForeignKey(TipoInvestimento, on_delete=models.CASCADE)  # Chave estrangeira para TipoInvestimento
 
     class Meta:
         verbose_name_plural = "Perfis de Investimento"
 
     def __str__(self):
         return self.descricao
+
 
 class Question(models.Model):
     text = models.CharField(max_length=200)
@@ -121,3 +120,5 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text
+
+

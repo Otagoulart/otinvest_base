@@ -1,13 +1,12 @@
 from django.contrib import admin
-from .models import Comentario, Duvida, Investidor, PerfilInvest, Seguranca, Contato, TipoInvest, Corretora
+from .models import Comentario, Duvida, Investidor, PerfilInvest, Seguranca, Contato, Corretora
 from .models import Question, Answer
+from .models import Corretora, TipoInvestimento
 class ContatoInline(admin.TabularInline):
     model = Contato
     extra = 1  # Permite adicionar uma nova entrada sem sair da página
 
-class TipoInvestInline(admin.TabularInline):
-    model = TipoInvest
-    extra = 1  # Permite adicionar uma nova entrada sem sair da página
+
 
 class CorretoraInline(admin.TabularInline):
     model = Corretora
@@ -16,7 +15,7 @@ class CorretoraInline(admin.TabularInline):
 class InvestidorAdmin(admin.ModelAdmin):
     list_display = ["id_investidor", "nome", "cpf", "datanasc", "endereco", "cidade", "email"]
     search_fields = ["nome", "cpf", "email"]
-    inlines = [ContatoInline, TipoInvestInline, CorretoraInline]
+    inlines = [ContatoInline, CorretoraInline]
     list_filter = ["cidade"]  # Adicionando filtro por cidade, se necessário
     ordering = ["nome"]  # Ordenação por nome
 
@@ -51,16 +50,6 @@ class ContatoAdmin(admin.ModelAdmin):
     ordering = ["investidor"]  # Ordenação por investidor
 
 
-class TipoInvestAdmin(admin.ModelAdmin):
-    list_display = ["id", "tipo_de_investimento", "area", "investidor"]
-    search_fields = ["tipo_de_investimento", "area", "investidor__nome"]
-    ordering = ["tipo_de_investimento"]  # Ordenação por tipo_de_investimento
-
-
-class CorretoraAdmin(admin.ModelAdmin):
-    list_display = ["id", "nome", "area", "avaliacao", "investidor"]
-    search_fields = ["nome", "area", "investidor__nome"]
-    ordering = ["nome"]  # Ordenação por nome
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ["id", "text"]
@@ -73,14 +62,28 @@ class AnswerAdmin(admin.ModelAdmin):
     list_filter = ["category"]
     ordering = ["question", "text"]
 
+from django.contrib import admin
+
+
+# Registro das models no admin
+@admin.register(Corretora)
+class CorretoraAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'avaliacao', 'pais')  # Colunas visíveis no admin
+    search_fields = ('nome', 'pais')  # Adicionar campo de busca
+    list_filter = ('pais', 'avaliacao')  # Filtros laterais
+
+@admin.register(TipoInvestimento)
+class TipoInvestimentoAdmin(admin.ModelAdmin):
+    list_display = ('tipo', 'risco', 'retorno_esperado')  # Colunas visíveis no admin
+    search_fields = ('tipo',)  # Campo de busca por tipo de investimento
+    list_filter = ('risco',)  # Filtros laterais para risco
+
 
 admin.site.register(Duvida)
 admin.site.register(Investidor)
 admin.site.register(PerfilInvest)
 admin.site.register(Seguranca)
 admin.site.register(Contato)
-admin.site.register(TipoInvest)
-admin.site.register(Corretora)
 admin.site.register(Comentario)
 admin.site.register(Question)
 admin.site.register(Answer)

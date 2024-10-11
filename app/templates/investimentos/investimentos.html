@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Investimentos</title>
+</head>
+<body>
+    <h1>Meus Investimentos</h1>
+
+    {% if investimentos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Salário</th>
+                    <th>Capital Investido</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for investimento in investimentos %}
+                    <tr>
+                        <td>{{ investimento.descricao }}</td>
+                        <td>{{ investimento.salario }}</td>
+                        <td>{{ investimento.capital_investido }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Você ainda não tem investimentos registrados.</p>
+    {% endif %}
+
+    <a href="{% url 'meus_investimentos' %}">Adicionar Novo Investimento</a>  <!-- Link para criar novos investimentos -->
+</body>
+</html>
