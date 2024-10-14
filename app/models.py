@@ -122,3 +122,17 @@ class Answer(models.Model):
         return self.text
 
 
+# models.py
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class SimuladorInvestimento(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    valor_investido = models.DecimalField(max_digits=10, decimal_places=2)
+    periodo = models.IntegerField()  # em meses
+    perfil_risco = models.CharField(max_length=100)  # Segurança, Oscilações moderadas, etc.
+    resultado = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return f"Simulação de {self.usuario.username} - {self.valor_investido}"

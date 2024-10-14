@@ -79,8 +79,15 @@ urlpatterns = [
     path('investimentos/', views.investimentos, name='investimentos'),
     path('investimentos/editar/<int:pk>/', views.editar_investimento, name='editar_investimento'),
     path('investimentos/excluir/<int:pk>/', views.excluir_investimento, name='excluir_investimento'),
-     path('sobre/', views.sobre, name='sobre'),
+    path('sobre/', views.sobre, name='sobre'),
+
+    path('simulador_investimento/', views.simulador_investimento, name='simulador_investimento'),
+    path('simulador/resultado/<int:simulacao_id>/', views.resultado_simulacao, name='resultado_simulacao'),
+    path('simulacao/excluir/<int:simulacao_id>/', excluir_simulacao, name='excluir_simulacao'),
 ]
+
+
+
 
 
     

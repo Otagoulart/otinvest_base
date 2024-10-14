@@ -319,3 +319,52 @@ def excluir_investimento(request, pk):
 def sobre(request):
     return render(request, 'sobre.html')
 
+# views.py
+
+from django.shortcuts import render, redirect
+from .forms import SimuladorInvestimentoForm
+from .models import SimuladorInvestimento
+
+from decimal import Decimal
+
+def simulador_investimento(request):
+    if request.method == 'POST':
+        form = SimuladorInvestimentoForm(request.POST)
+        if form.is_valid():
+            simulacao = form.save(commit=False)
+            # Converte os valores de porcentagem de retorno para Decimal
+            if simulacao.perfil_risco == 'Seguro, Sugestão: Tesouro direto':
+                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.10) * simulacao.periodo / Decimal(12))  # Exemplo 3% ao ano
+            elif simulacao.perfil_risco == 'Moderado, Sugestão: Renda Fixa, Fundos Imobiliários (FIIs)':
+                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.08) * simulacao.periodo / Decimal(12))  # Exemplo 5% ao ano
+            elif simulacao.perfil_risco == 'Arrojado, Sugestão: Ações':
+                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.12) * simulacao.periodo / Decimal(12))  # Exemplo 8% ao ano
+            else:
+                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.30) * simulacao.periodo / Decimal(12))  # Exemplo 12% ao ano
+
+            simulacao.resultado = retorno
+            simulacao.usuario = request.user
+            simulacao.save()
+            return redirect('resultado_simulacao', simulacao_id=simulacao.id)
+    else:
+        form = SimuladorInvestimentoForm()
+
+    simulacoes_anteriores = SimuladorInvestimento.objects.filter(usuario=request.user)
+
+
+    return render(request, 'simulacao/simulador_investimento.html', {'form': form, 'simulacoes_anteriores': simulacoes_anteriores})
+
+# views.py
+
+def resultado_simulacao(request, simulacao_id):
+    simulacao = SimuladorInvestimento.objects.get(id=simulacao_id)
+    return render(request,'simulacao/resultado_simulacao.html', {'simulacao': simulacao})
+
+@login_required
+def excluir_simulacao(request, simulacao_id):
+    simulacao = get_object_or_404(SimuladorInvestimento, id=simulacao_id, usuario=request.user)
+    if request.method == 'POST':
+        simulacao.delete()
+        messages.success(request, "Simulação excluída com sucesso.")
+        return redirect('simulador_investimento')
+    return render(request, 'simulacao/excluir_simulacao.html', {'simulacao': simulacao})

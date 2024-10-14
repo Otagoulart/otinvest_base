@@ -71,3 +71,20 @@ class InvestimentoForm(forms.ModelForm):
             self.fields['corretora'].queryset = Corretora.objects.filter()  # Aqui você pode filtrar baseado no user
 
 
+# forms.py
+
+from django import forms
+from .models import SimuladorInvestimento
+
+class SimuladorInvestimentoForm(forms.ModelForm):
+    class Meta:
+        model = SimuladorInvestimento
+        fields = ['valor_investido', 'periodo', 'perfil_risco']
+        widgets = {
+            'perfil_risco': forms.RadioSelect(choices=[
+                ('Seguro, Sugestão: Tesouro direto ', 'Busco primeiro segurança, não quero perder dinheiro'),
+                ('Moderado, Sugestão: Renda Fixa, Fundos Imobiliários (FIIs)', 'Tolero pequenas oscilações, mas nada que arrisque meu patrimônio'),
+                ('Arrojado, Sugestão: Ações', 'Aceito algumas perdas, em busca de ganhos maiores no longo prazo'),
+                ('Alto risco, Sugestão: Criptomoedas:', 'Busco a maior rentabilidade no curto prazo, assumindo altos riscos')
+            ])
+        }
