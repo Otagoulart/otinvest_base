@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Investimentos</title>
+    <title>Enviar Arquivo</title>
     <style>
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -53,7 +53,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 20px;
             text-align: center;
         }
@@ -81,17 +80,23 @@
             color: #2c3e50;
             margin-bottom: 5px;
             display: block;
+            text-align: left;
         }
 
-        input, select {
-            padding: 10px;
+        input[type="file"],
+        input[type="text"],
+        textarea {
+            padding: 8px; /* Diminuindo o padding */
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px; /* Diminuindo o tamanho da fonte */
             transition: border-color 0.3s;
+            width: calc(100% - 16px); /* Ajustando a largura para incluir padding */
         }
 
-        input:focus, select:focus {
+        input[type="file"]:focus,
+        input[type="text"]:focus,
+        textarea:focus {
             border-color: #27ae60;
             outline: none;
         }
@@ -122,24 +127,6 @@
             bottom: 0;
             width: 100%;
         }
-
-        .alert {
-            padding: 10px;
-            margin: 20px 0;
-            border-radius: 5px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
     </style>
 </head>
 
@@ -149,23 +136,24 @@
         <nav>
             <a href="/">Home</a>
             <a href="https://forms.gle/5Pn6L3nQazyjgrNJ7">Contato</a>
-            
         </nav>
     </header>
 
     <main>
-        <h2>Meus Investimentos</h2>
-        
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST">
+        <h2>Enviar Arquivo</h2>
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Salvar Investimento</button>
+            <label for="titulo">Título:</label>
+            <input type="text" name="titulo" id="titulo" required>
+
+            <label for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" rows="3" required></textarea>
+
+            <label for="arquivo">Arquivo:</label>
+            <input type="file" name="arquivo" id="arquivo" required>
+
+            <button type="submit">Enviar</button>
+            
         </form>
     </main>
 

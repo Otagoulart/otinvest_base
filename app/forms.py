@@ -6,7 +6,7 @@ from .models import Investidor
 from .models import Duvida
 from .models import Comentario
 from .models import Answer
-from .models import Corretora, TipoInvestimento, PerfilInvest
+from .models import Corretora, TipoInvestimento, PerfilInvest, SimuladorInvestimento, Arquivo
 
 class RegisterForm(UserCreationForm):
     # Campos relacionados ao investidor
@@ -71,11 +71,6 @@ class InvestimentoForm(forms.ModelForm):
             self.fields['corretora'].queryset = Corretora.objects.filter()  # Aqui você pode filtrar baseado no user
 
 
-# forms.py
-
-from django import forms
-from .models import SimuladorInvestimento
-
 class SimuladorInvestimentoForm(forms.ModelForm):
     class Meta:
         model = SimuladorInvestimento
@@ -88,3 +83,9 @@ class SimuladorInvestimentoForm(forms.ModelForm):
                 ('Alto risco, Sugestão: Criptomoedas:', 'Busco a maior rentabilidade no curto prazo, assumindo altos riscos')
             ])
         }
+
+
+class ArquivoForm(forms.ModelForm):
+    class Meta:
+        model = Arquivo
+        fields = ['titulo', 'arquivo', 'descricao']

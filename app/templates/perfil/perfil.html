@@ -136,7 +136,7 @@
         <nav>
             <a href="/"> Home </a>
             <a href="https://forms.gle/5Pn6L3nQazyjgrNJ7">Contato</a>
-            <a href="#sobre">Sobre</a>
+            <a href="sobre">Sobre</a>
             <form action="{% url 'logout' %}" method="post" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit">Logout</button>
@@ -146,8 +146,8 @@
         <h1>OTINVEST</h1>
         <nav>
             <a href="/">Home</a>
-            <a href="#contato">Contato</a>
-            <a href="#sobre">Sobre</a>
+            <a href="https://forms.gle/5Pn6L3nQazyjgrNJ7">Contato</a>
+            <a href="sobre">Sobre</a>
         </nav>
         {% endif %}
     </header>
@@ -166,7 +166,8 @@
         <div class="profile-actions">
             <a href="{% url 'editar_perfil' %}">Editar Perfil</a> |
             <a href="{% url 'trocar_senha' %}">Trocar Senha</a> |
-            <a href="{% url 'deletar_conta' %}">Deletar Conta</a>
+            <a href="{% url 'deletar_conta' %}">Deletar Conta</a>|
+            <a href="{% url 'lista_arquivos' %}">Meus Arquivos</a>
         </div>
     </section>
 

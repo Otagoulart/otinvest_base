@@ -105,6 +105,12 @@
             font-weight: bold;
             margin-top: 20px;
         }
+        a {
+            color: #27ae60;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
 
         form button:hover {
             background-color: #219150;
@@ -172,7 +178,6 @@
     <nav>
         <a href="/">Home</a>
         <a href="https://forms.gle/5Pn6L3nQazyjgrNJ7">Contato</a>
-        <a href="#sobre">Sobre</a>
     </nav>
 </header>
 
@@ -191,6 +196,7 @@
         {% endfor %}
     </ul>
     {% endif %}
+    <a href="{% url 'lista_duvidas' %}" class="voltar">Voltar</a>
 </section>
 
 <footer>

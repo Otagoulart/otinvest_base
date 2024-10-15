@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Investimentos</title>
+    <title>Excluir Arquivo</title>
     <style>
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -64,40 +64,22 @@
             margin-bottom: 20px;
         }
 
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
         form {
-            max-width: 600px;
+            max-width: 400px;
             width: 100%;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        label {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        input, select {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus {
-            border-color: #27ae60;
-            outline: none;
-        }
-
         button {
-            background-color: #27ae60;
+            background-color: #e74c3c;
             color: white;
             border: none;
             padding: 12px;
@@ -110,7 +92,18 @@
         }
 
         button:hover {
-            background-color: #2ecc71;
+            background-color: #c0392b;
+        }
+
+        a {
+            margin-top: 10px;
+            color: #27ae60;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
 
         footer {
@@ -122,24 +115,6 @@
             bottom: 0;
             width: 100%;
         }
-
-        .alert {
-            padding: 10px;
-            margin: 20px 0;
-            border-radius: 5px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
     </style>
 </head>
 
@@ -149,24 +124,18 @@
         <nav>
             <a href="/">Home</a>
             <a href="https://forms.gle/5Pn6L3nQazyjgrNJ7">Contato</a>
-            
+    
         </nav>
     </header>
 
     <main>
-        <h2>Meus Investimentos</h2>
-        
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST">
+        <h2>Excluir Arquivo</h2>
+        <p>Você tem certeza que deseja excluir o arquivo "{{ arquivo.titulo }}"?</p>
+        <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Salvar Investimento</button>
+            <button type="submit">Excluir</button>
         </form>
+        <a href="{% url 'lista_arquivos' %}">Cancelar</a>
     </main>
 
     <footer>

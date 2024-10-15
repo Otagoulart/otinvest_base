@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Investimentos</title>
+    <title>Meus Arquivos</title>
     <style>
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -53,7 +53,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 20px;
             text-align: center;
         }
@@ -64,53 +63,43 @@
             margin-bottom: 20px;
         }
 
-        form {
+        a {
+            color: #27ae60;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #2ecc71;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
             max-width: 600px;
             width: 100%;
+            margin: 20px 0;
+        }
+
+        .file-list li {
             background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        label {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            display: block;
+        .file-actions a {
+            color: #e74c3c;
+            margin-left: 10px;
         }
 
-        input, select {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus {
-            border-color: #27ae60;
-            outline: none;
-        }
-
-        button {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            display: block;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #2ecc71;
+        .file-actions a:hover {
+            color: #c0392b;
         }
 
         footer {
@@ -123,22 +112,19 @@
             width: 100%;
         }
 
-        .alert {
-            padding: 10px;
-            margin: 20px 0;
+        .upload-link {
+            margin-bottom: 20px;
+            display: inline-block;
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
             border-radius: 5px;
-            width: 100%;
-            max-width: 600px;
+            text-decoration: none;
+            transition: background-color 0.3s;
         }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
+        .upload-link:hover {
+            background-color: #2ecc71;
         }
     </style>
 </head>
@@ -149,24 +135,29 @@
         <nav>
             <a href="/">Home</a>
             <a href="https://forms.gle/5Pn6L3nQazyjgrNJ7">Contato</a>
-            
+            <a href="sobre">Sobre</a>
         </nav>
     </header>
 
     <main>
-        <h2>Meus Investimentos</h2>
-        
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
+        <h2>Meus Arquivos</h2>
+        <a class="upload-link" href="{% url 'upload_arquivo' %}">Enviar Novo Arquivo</a>
 
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Salvar Investimento</button>
-        </form>
+        <ul class="file-list">
+            {% for arquivo in arquivos %}
+            <li>
+                <div>
+                    <a href="{{ arquivo.arquivo.url }}">{{ arquivo.titulo }}</a>
+                </div>
+                <div class="file-actions">
+                    <a href="{% url 'edita_arquivo' arquivo.id %}">Editar</a> - 
+                    <a href="{% url 'exclui_arquivo' arquivo.id %}">Excluir</a>
+                </div>
+            </li>
+            {% endfor %}
+            
+        </ul>
+        <a href="{% url 'perfil_usuario' %}" class="voltar">Voltar</a>
     </main>
 
     <footer>

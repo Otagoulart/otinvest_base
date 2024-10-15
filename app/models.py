@@ -136,3 +136,13 @@ class SimuladorInvestimento(models.Model):
 
     def __str__(self):
         return f"Simulação de {self.usuario.username} - {self.valor_investido}"
+
+class Arquivo(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  
+    titulo = models.CharField(max_length=255) 
+    arquivo = models.FileField(upload_to='arquivos/')
+    descricao = models.TextField(blank=True)
+    data_envio = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.titulo

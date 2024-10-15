@@ -1,8 +1,9 @@
 from django.contrib import admin
 from .models import Comentario, Duvida, Investidor, PerfilInvest, Seguranca, Contato, Corretora
 from .models import Question, Answer
-from .models import Corretora, TipoInvestimento
+from .models import Corretora, TipoInvestimento,Arquivo
 class ContatoInline(admin.TabularInline):
+
     model = Contato
     extra = 1  # Permite adicionar uma nova entrada sem sair da página
 
@@ -78,6 +79,13 @@ class TipoInvestimentoAdmin(admin.ModelAdmin):
     search_fields = ('tipo',)  # Campo de busca por tipo de investimento
     list_filter = ('risco',)  # Filtros laterais para risco
 
+
+@admin.register(Arquivo)
+class ArquivoAdmin(admin.ModelAdmin):
+    list_display = ['usuario', 'data_envio']
+    search_fields = ['nome', 'usuario__username']
+    list_filter = ['data_envio', 'usuario']
+    ordering = ['-data_envio']
 
 admin.site.register(Duvida)
 admin.site.register(Investidor)

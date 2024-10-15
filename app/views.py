@@ -368,3 +368,47 @@ def excluir_simulacao(request, simulacao_id):
         messages.success(request, "Simulação excluída com sucesso.")
         return redirect('simulador_investimento')
     return render(request, 'simulacao/excluir_simulacao.html', {'simulacao': simulacao})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Arquivo
+from .forms import ArquivoForm
+
+@login_required
+def lista_arquivos(request):
+    arquivos = Arquivo.objects.filter(usuario=request.user)
+    return render(request, 'arquivo/lista_arquivos.html', {'arquivos': arquivos})
+
+@login_required
+def upload_arquivo(request):
+    if request.method == 'POST':
+        form = ArquivoForm(request.POST, request.FILES)
+        if form.is_valid():
+            arquivo = form.save(commit=False)
+            arquivo.usuario = request.user
+            arquivo.save()
+            return redirect('lista_arquivos')
+    else:
+        form = ArquivoForm()
+    return render(request, 'arquivo/upload_arquivo.html', {'form': form})
+
+@login_required
+def edita_arquivo(request, id):
+    arquivo = get_object_or_404(Arquivo, id=id, usuario=request.user)
+    if request.method == 'POST':
+        form = ArquivoForm(request.POST, request.FILES, instance=arquivo)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_arquivos')
+    else:
+        form = ArquivoForm(instance=arquivo)
+    return render(request, 'arquivo/edita_arquivo.html', {'form': form})
+
+@login_required
+def exclui_arquivo(request, id):
+    arquivo = get_object_or_404(Arquivo, id=id, usuario=request.user)
+    if request.method == 'POST':
+        arquivo.delete()
+        return redirect('lista_arquivos')
+    return render(request, 'arquivo/exclui_arquivo.html', {'arquivo': arquivo})
