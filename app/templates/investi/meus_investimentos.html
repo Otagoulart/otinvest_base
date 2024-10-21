@@ -74,6 +74,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            margin-bottom: 40px; /* Espaço do rodapé */
         }
 
         label {
@@ -118,9 +119,7 @@
             color: white;
             text-align: center;
             padding: 15px 20px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            margin-top: auto; /* Garante que o rodapé fique sempre no fim da página */
         }
 
         .alert {
@@ -149,13 +148,12 @@
         <nav>
             <a href="/">Home</a>
             <a href="https://forms.gle/5Pn6L3nQazyjgrNJ7">Contato</a>
-            
         </nav>
     </header>
 
     <main>
         <h2>Meus Investimentos</h2>
-        
+
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-success">{{ message }}</div>
