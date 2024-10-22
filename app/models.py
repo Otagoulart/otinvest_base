@@ -2,19 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-
-# Modelo para Dúvidas
 class Duvida(models.Model):
-    titulo = models.CharField(max_length=255, default="Sem título")  # Defina um valor padrão
-    autor = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)  # Tornar nulável
+    titulo = models.CharField(max_length=255, default="Sem título")
+    autor = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     duvida = models.TextField()
 
     class Meta:
-        verbose_name_plural = "Duvidas"
+        verbose_name_plural = "Dúvidas"
 
     def __str__(self):
-        return self.titulo  # Exibir o título como representação
-        
+        return self.titulo
+
+
+
 class Comentario(models.Model):
     duvida = models.ForeignKey(Duvida, related_name="comentarios", on_delete=models.CASCADE)
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -24,10 +24,11 @@ class Comentario(models.Model):
     def __str__(self):
         return f"Comentário de {self.autor} em {self.duvida}"
 
-        
+
+
 class Investidor(models.Model):
-    id_investidor = models.AutoField(primary_key=True)  # Este é o campo principal
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default=1, related_name='investidor')  # Associa um Investidor a um User
+    id_investidor = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=1, related_name='investidor')
     nome = models.CharField(max_length=100)
     cpf = models.CharField(max_length=11)
     datanasc = models.DateField(null=True, blank=True)
@@ -41,7 +42,7 @@ class Investidor(models.Model):
         return f"{self.nome} - {self.id_investidor}"
 
 
-# Modelo para Segurança
+
 class Seguranca(models.Model):
     titulo = models.CharField(max_length=50)
     dicas = models.TextField()
@@ -53,7 +54,8 @@ class Seguranca(models.Model):
     def __str__(self):
         return self.titulo
 
-# Modelo para Contato
+
+
 class Contato(models.Model):
     numero = models.CharField(max_length=15)
     email = models.EmailField()
@@ -65,10 +67,13 @@ class Contato(models.Model):
 
     def __str__(self):
         return self.email
+
+
+
 class Corretora(models.Model):
     nome = models.CharField(max_length=255)
-    avaliacao = models.FloatField()  # Avaliação da corretora, por exemplo, de 0 a 5
-    pais = models.CharField(max_length=100, default="Brasil")  # País onde a corretora opera
+    avaliacao = models.FloatField()
+    pais = models.CharField(max_length=100, default="Brasil")
 
     class Meta:
         verbose_name_plural = "Corretoras"
@@ -77,11 +82,12 @@ class Corretora(models.Model):
         return f"{self.nome} - {self.pais}"
 
 
+
 class TipoInvestimento(models.Model):
     tipo = models.CharField(max_length=100)
     descricao = models.TextField()
-    risco = models.CharField(max_length=50)  # Exemplo: "Alto", "Moderado", "Baixo"
-    retorno_esperado = models.DecimalField(max_digits=10, decimal_places=2)  # Percentual de retorno esperado
+    risco = models.CharField(max_length=50)
+    retorno_esperado = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         verbose_name_plural = "Tipos de Investimento"
@@ -92,12 +98,12 @@ class TipoInvestimento(models.Model):
 
 
 class PerfilInvest(models.Model):
-    idperfilinvest = models.BigAutoField(primary_key=True, )  # Exemplo correto
+    idperfilinvest = models.BigAutoField(primary_key=True)
     investidor = models.ForeignKey(Investidor, on_delete=models.CASCADE)
     descricao = models.CharField(max_length=50)
     capital_investido = models.DecimalField(max_digits=10, decimal_places=2, default=100)
-    corretora = models.ForeignKey(Corretora, on_delete=models.CASCADE )  # Chave estrangeira para Corretora
-    tipo_investimento = models.ForeignKey(TipoInvestimento, on_delete=models.CASCADE)  # Chave estrangeira para TipoInvestimento
+    corretora = models.ForeignKey(Corretora, on_delete=models.CASCADE)
+    tipo_investimento = models.ForeignKey(TipoInvestimento, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Perfis de Investimento"
@@ -106,11 +112,13 @@ class PerfilInvest(models.Model):
         return self.descricao
 
 
+
 class Question(models.Model):
     text = models.CharField(max_length=200)
 
     def __str__(self):
         return self.text
+
 
 
 class Answer(models.Model):
@@ -122,24 +130,22 @@ class Answer(models.Model):
         return self.text
 
 
-# models.py
-
-from django.db import models
-from django.contrib.auth.models import User
 
 class SimuladorInvestimento(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     valor_investido = models.DecimalField(max_digits=10, decimal_places=2)
-    periodo = models.IntegerField()  # em meses
-    perfil_risco = models.CharField(max_length=100)  # Segurança, Oscilações moderadas, etc.
+    periodo = models.IntegerField()
+    perfil_risco = models.CharField(max_length=100)
     resultado = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
         return f"Simulação de {self.usuario.username} - {self.valor_investido}"
 
+
+
 class Arquivo(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  
-    titulo = models.CharField(max_length=255) 
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    titulo = models.CharField(max_length=255)
     arquivo = models.FileField(upload_to='arquivos/')
     descricao = models.TextField(blank=True)
     data_envio = models.DateTimeField(auto_now_add=True)

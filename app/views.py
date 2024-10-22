@@ -1,28 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout,update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Duvida, Investidor, Corretora, Seguranca, Question, Answer, Contato, Comentario
-from .forms import RegisterForm, ComentarioForm, DuvidaForm, QuizForm
+from .models import Duvida, Investidor, Corretora, Seguranca, Question, Answer, Contato, Comentario, Arquivo,SimuladorInvestimento
+from .forms import RegisterForm, ComentarioForm, DuvidaForm, QuizForm,InvestimentoForm,ArquivoForm,SimuladorInvestimentoForm
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib import messages
-from .models import Investidor
-from .forms import InvestimentoForm
-from django.contrib.auth.decorators import login_required
 from .models import PerfilInvest
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect,render, redirect,get_object_or_404
+from decimal import Decimal
 
 
 class IndexView(View):
     def get(self, request):
         return render(request, 'index.html')
-
 
 class ContatoView(View):
     def get(self, request):
@@ -38,7 +33,6 @@ class CorretoraView(View):
     def get(self, request):
         corretoras = Corretora.objects.all()
         return render(request, 'ondeinvestir.html', {'corretoras': corretoras})
-
 
 def register(request):
     if request.method == "POST":
@@ -179,8 +173,8 @@ def exclui_comentario(request, comentario_id):
         return redirect('detalhes_duvida', id=comentario.duvida.id)
     return render(request, 'forum/exclui_comentario.html', {'comentario': comentario})
 
-class QuizForm(forms.Form):
-    pass
+    class QuizForm(forms.Form):
+        pass
 
 def quiz_view(request):
     questions = Question.objects.all()
@@ -211,13 +205,12 @@ def quiz_view(request):
             )
         return render(request, 'quiz/quiz.html', {'form': quiz_form, 'questions': questions})
 
-# Ver perfil
 @login_required
 def perfil_usuario(request):
     investidor = get_object_or_404(Investidor, user=request.user)
     return render(request, 'perfil/perfil.html', {'investidor': investidor})
 
-# Editar perfil
+
 @login_required
 def editar_perfil(request):
     user = request.user  
@@ -235,14 +228,14 @@ def editar_perfil(request):
         return redirect('perfil_usuario')
     return render(request, 'perfil/editar_perfil.html', {'investidor': investidor})
 
-# Trocar senha
+
 @login_required
 def trocar_senha(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Evitar logout após troca de senha
+            update_session_auth_hash(request, user) 
             messages.success(request, 'Senha atualizada com sucesso!')
             return redirect('perfil_usuario')
         else:
@@ -251,18 +244,19 @@ def trocar_senha(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'perfil/trocar_senha.html', {'form': form})
 
-# Deletar conta
+
 @login_required
 def deletar_conta(request):
+
     if request.method == 'POST':
         user = request.user
         user.delete()
         messages.success(request, 'Conta deletada com sucesso.')
-        return redirect('/')  # Redireciona após deletar
+        return redirect('/') 
     return render(request, 'perfil/deletar_conta.html')
+
 @login_required
 def investimentos(request):
-    # Obtém todos os investimentos do usuário logado
     investimentos = PerfilInvest.objects.filter(investidor__user=request.user)
 
     return render(request, 'investi/investimentos.html', {'investimentos': investimentos})
@@ -273,18 +267,15 @@ def meus_investimentos(request):
     try:
         investidor = request.user.investidor
     except Investidor.DoesNotExist:
-        # Você pode criar um novo investidor para o usuário, ou redirecioná-lo para criá-lo manualmente
         investidor = Investidor.objects.create(user=request.user)
-        # Ou redirecionar o usuário a uma página para criar um investidor
-        # return redirect('criar_investidor')
 
     if request.method == 'POST':
         form = InvestimentoForm(request.POST, user=request.user)
         if form.is_valid():
             perfil_invest = form.save(commit=False)
-            perfil_invest.investidor = investidor  # Certifique-se de associar o investidor corretamente
-            perfil_invest.save()  # Agora o perfil_invest é salvo no banco de dados
-            return redirect('investimentos')  # Redireciona após salvar
+            perfil_invest.investidor = investidor  
+            perfil_invest.save() 
+            return redirect('investimentos') 
     else:
         form = InvestimentoForm(user=request.user)
 
@@ -293,15 +284,14 @@ def meus_investimentos(request):
 
 @login_required
 def editar_investimento(request, pk):
-    # Obtenha o investimento baseado no investidor logado e o ID (pk)
     investimento = get_object_or_404(PerfilInvest, pk=pk, investidor__user=request.user)
     
     if request.method == 'POST':
         form = InvestimentoForm(request.POST, instance=investimento, user=request.user) 
         if form.is_valid():
-            perfil_invest = form.save(commit=False)  # Salva o formulário sem enviar ao banco ainda
-            perfil_invest.investidor = request.user.investidor  # Associa o investidor ao investimento
-            perfil_invest.save()  # Agora salva o investimento com o investidor correto
+            perfil_invest = form.save(commit=False) 
+            perfil_invest.investidor = request.user.investidor 
+            perfil_invest.save()  
             return redirect('investimentos')
     else:
         form = InvestimentoForm(instance=investimento, user=request.user)  
@@ -319,28 +309,20 @@ def excluir_investimento(request, pk):
 def sobre(request):
     return render(request, 'sobre.html')
 
-# views.py
-
-from django.shortcuts import render, redirect
-from .forms import SimuladorInvestimentoForm
-from .models import SimuladorInvestimento
-
-from decimal import Decimal
 
 def simulador_investimento(request):
     if request.method == 'POST':
         form = SimuladorInvestimentoForm(request.POST)
         if form.is_valid():
             simulacao = form.save(commit=False)
-            # Converte os valores de porcentagem de retorno para Decimal
             if simulacao.perfil_risco == 'Seguro, Sugestão: Tesouro direto':
-                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.10) * simulacao.periodo / Decimal(12))  # Exemplo 3% ao ano
+                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.10) * simulacao.periodo / Decimal(12))  
             elif simulacao.perfil_risco == 'Moderado, Sugestão: Renda Fixa, Fundos Imobiliários (FIIs)':
-                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.08) * simulacao.periodo / Decimal(12))  # Exemplo 5% ao ano
+                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.08) * simulacao.periodo / Decimal(12)) 
             elif simulacao.perfil_risco == 'Arrojado, Sugestão: Ações':
-                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.12) * simulacao.periodo / Decimal(12))  # Exemplo 8% ao ano
+                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.12) * simulacao.periodo / Decimal(12)) 
             else:
-                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.30) * simulacao.periodo / Decimal(12))  # Exemplo 12% ao ano
+                retorno = simulacao.valor_investido * (Decimal(1) + Decimal(0.30) * simulacao.periodo / Decimal(12)) 
 
             simulacao.resultado = retorno
             simulacao.usuario = request.user
@@ -354,7 +336,6 @@ def simulador_investimento(request):
 
     return render(request, 'simulacao/simulador_investimento.html', {'form': form, 'simulacoes_anteriores': simulacoes_anteriores})
 
-# views.py
 
 def resultado_simulacao(request, simulacao_id):
     simulacao = SimuladorInvestimento.objects.get(id=simulacao_id)
@@ -369,11 +350,6 @@ def excluir_simulacao(request, simulacao_id):
         return redirect('simulador_investimento')
     return render(request, 'simulacao/excluir_simulacao.html', {'simulacao': simulacao})
 
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Arquivo
-from .forms import ArquivoForm
 
 @login_required
 def lista_arquivos(request):
